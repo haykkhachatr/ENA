@@ -296,8 +296,13 @@
       <p data-i18n="d.sub">Every line segment in the current selection.</p>
     </div>
     <div class="export">
+      <div class="seg export-scope" id="exScope" role="group" hidden>
+        <button type="button" data-scope="selection" aria-pressed="true"></button>
+        <button type="button" data-scope="all" aria-pressed="false"></button>
+      </div>
       <button type="button" class="btn" id="dCsv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.csv">Download CSV</span></button>
       <button type="button" class="btn" id="dGeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.geojson">Download GeoJSON</span></button>
+      <p class="fine export-note" id="exNote" role="status" hidden></p>
     </div>
   </header>
 

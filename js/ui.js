@@ -664,6 +664,36 @@
   }
 
   /* =========================================================
+     Downloads: there is always something to download
+     - filtered view  -> "Current selection" or "Full network" (user's choice)
+     - nothing matches -> falls back to the full network, with a note
+     ========================================================= */
+  const EX = { all: false };
+  function exportTarget() {
+    const useAll = EX.all || HEC.sel.length === 0 || HEC.activeCount() === 0;
+    return { list: useAll ? D.features : HEC.sel, tag: useAll ? 'all' : 'selection' };
+  }
+  function bindExport() {
+    $('#dCsv').addEventListener('click', () => { const x = exportTarget(); HEC.exportCSV(x.list, x.tag); });
+    $('#dGeo').addEventListener('click', () => { const x = exportTarget(); HEC.exportGeoJSON(x.list, x.tag); });
+    $$('#exScope button').forEach((b) => b.addEventListener('click', () => { EX.all = b.dataset.scope === 'all'; updateExport(); }));
+  }
+  function updateExport() {
+    const n = HEC.sel.length;
+    $('#exScope').hidden = HEC.activeCount() === 0;
+    const btns = $$('#exScope button');
+    btns[0].textContent = t('d.scope.sel') + ' · ' + fmt.int(n);
+    btns[1].textContent = t('d.scope.all') + ' · ' + fmt.int(HEC.base.n);
+    btns[0].disabled = n === 0;
+    const useAll = EX.all || n === 0;
+    btns[0].setAttribute('aria-pressed', String(!useAll));
+    btns[1].setAttribute('aria-pressed', String(useAll));
+    const note = $('#exNote');
+    note.hidden = n > 0;
+    note.textContent = t('d.fallback');
+  }
+
+  /* =========================================================
      Notes
      ========================================================= */
   function renderNotes() {
@@ -713,17 +743,17 @@
      Orchestration
      ========================================================= */
   UI.update = () => {
-    updateFilterBar(); updateKpis(); updateFindings(); updateBranches(); updateTable();
+    updateFilterBar(); updateKpis(); updateFindings(); updateBranches(); updateTable(); updateExport();
   };
   UI.init = () => {
     initHeader();
-    bindFilterStatic(); buildFilterBar(); buildKpis(); buildBranches(); buildTableHead();
+    bindFilterStatic(); bindExport(); buildFilterBar(); buildKpis(); buildBranches(); buildTableHead();
     renderHeroText(); renderNotes();
     initHero();
     initReveal();
     UI.update();
 
-    HEC.on('filter', () => { if ($('#fSearch') !== document.activeElement) $('#fSearch').value = HEC.state.q; T.page = 0; UI.update(); });
+    HEC.on('filter', () => { if ($('#fSearch') !== document.activeElement) $('#fSearch').value = HEC.state.q; T.page = 0; EX.all = false; UI.update(); });
     HEC.on('select', () => updateTable());
     HEC.on('theme', () => { BF.bgKey = ''; updateBranches(); });
     HEC.on('lang', () => {
