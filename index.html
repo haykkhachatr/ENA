@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yerevan Network Atlas · Electric Networks Department · Hayastan</title>
+  <meta name="description" content="Interactive atlas of the Yerevan 6, 10 and 35 kV line network for the Electric Networks Department of Hayastan: filters, maps, charts and a segment register.">
+  <meta name="theme-color" content="#0b1f33">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1f33'/%3E%3Cpath d='M18.5 4 8 18h6l-1.5 10L24 13h-6.2z' fill='%23f5b301'/%3E%3C/svg%3E">
+  <script>
+    /* set theme before first paint to avoid a flash */
+    (function () {
+      var t = 'light';
+      try { t = localStorage.getItem('hec.theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (e) {}
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<!-- ============ Header ============ -->
+<header class="topbar" id="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#overview" data-target="overview" aria-label="HAYASTAN — Electric Networks Department">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0b1f33"/><path d="M18.5 4 8 18h6l-1.5 10L24 13h-6.2z" fill="#f5b301"/></svg>
+      <span class="brand-text">
+        <span class="brand-country" data-i18n="brand.country">HAYASTAN</span>
+        <span class="brand-org" data-i18n="brand.org">Electric Networks Department</span>
+      </span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Sections">
+      <a href="#overview" data-target="overview" data-i18n="nav.overview">Overview</a>
+      <a href="#explore" data-target="explore" data-i18n="nav.explore">Map</a>
+      <a href="#analysis" data-target="analysis" data-i18n="nav.analysis">Analysis</a>
+      <a href="#branches" data-target="branches" data-i18n="nav.branches">Branches</a>
+      <a href="#data" data-target="data" data-i18n="nav.data">Data</a>
+      <a href="#notes" data-target="notes" data-i18n="nav.notes">Notes</a>
+    </nav>
+
+    <div class="tools">
+      <div class="seg lang" id="langSeg" role="group" data-i18n-attr="aria-label:tool.lang" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="hy" aria-pressed="false" lang="hy">ՀԱՅ</button>
+      </div>
+      <button type="button" class="icon-btn" id="themeBtn" data-i18n-attr="aria-label:tool.theme;title:tool.theme" aria-label="Switch light / dark theme">
+        <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="printBtn" data-i18n-attr="aria-label:tool.print;title:tool.print" aria-label="Print or save as PDF">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3.5h10V8M7 17H4.5v-7.5h15V17H17M7 14h10v6.5H7z"/></svg>
+      </button>
+      <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i18n-attr="aria-label:tool.menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ Hero ============ -->
+<section class="hero" id="overview">
+  <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-shade" aria-hidden="true"></div>
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="pulse-dot" aria-hidden="true"></span><span data-i18n="hero.eyebrow">Yerevan distribution network atlas</span></p>
+      <h1 data-i18n="hero.title">Yerevan’s power lines, mapped and measured</h1>
+      <p class="lead" data-i18n="hero.lead">An interactive overview of the 6, 10 and 35 kV line network.</p>
+
+      <div class="hero-fig">
+        <div class="hero-num"><span id="heroKm">0</span><span class="hero-unit" data-i18n="u.km">km</span></div>
+        <div class="hero-figlabel"><span id="heroLabel">of line across 1,697 segments</span></div>
+      </div>
+
+      <ul class="hero-stats">
+        <li><strong id="heroKv">3</strong><span data-i18n="hero.s.voltage">voltage levels</span></li>
+        <li><strong id="heroBr">6</strong><span data-i18n="hero.s.branches">branches</span></li>
+        <li><strong id="heroCm">14</strong><span data-i18n="hero.s.communities">communities</span></li>
+      </ul>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#explore" data-target="explore" data-i18n="hero.cta1">Explore the map</a>
+        <a class="btn btn-ghost" href="#findings" data-target="findings" data-i18n="hero.cta2">Read the key findings</a>
+      </div>
+    </div>
+    <p class="hero-caption" data-i18n="hero.caption">Drawn from the real line geometry — each pulse follows an actual segment.</p>
+  </div>
+</section>
+
+<!-- ============ Filters (sticky) ============ -->
+<div class="filterbar" id="filterbar">
+  <div class="wrap">
+    <div class="fb-top">
+      <button type="button" class="btn fb-toggle" id="fbToggle" aria-expanded="false" aria-controls="fbBody">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+        <span data-i18n="f.toggle">Filters</span><span class="badge" id="fbBadge" hidden>0</span>
+      </button>
+      <div class="fb-status-inline" id="fCountInline" aria-hidden="true"></div>
+    </div>
+
+    <div class="fb-body" id="fbBody">
+      <div class="fgroup">
+        <span class="flabel" data-i18n="f.voltage">Voltage</span>
+        <div class="kvchips" id="fVoltage" role="group" aria-label="Voltage"></div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel" data-i18n="f.branch">Branch</span>
+        <div class="dd" id="fBranch"></div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel" data-i18n="f.community">Community</span>
+        <div class="dd" id="fComm"></div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel" data-i18n="f.length">Segment length</span>
+        <div class="dd" id="fLen"></div>
+      </div>
+      <div class="fgroup grow">
+        <label class="flabel" for="fSearch" data-i18n="f.search">Search</label>
+        <div class="search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          <input id="fSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Name, ID or UID…" data-i18n-attr="placeholder:f.search.ph">
+        </div>
+      </div>
+      <div class="fb-actions">
+        <button type="button" class="btn btn-quiet" id="fReset" data-i18n="f.reset">Reset all</button>
+        <button type="button" class="icon-btn" id="fShare" data-i18n-attr="aria-label:f.share;title:f.share" aria-label="Copy link to this view">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="fb-status">
+      <p class="fcount" id="fCount" aria-live="polite"></p>
+      <div class="fchips" id="fChips"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ KPI strip ============ -->
+<section class="wrap block" id="kpisec" aria-label="Key figures">
+  <div class="kpis" id="kpis"></div>
+</section>
+
+<!-- ============ Key findings ============ -->
+<section class="wrap block" id="findings">
+  <header class="section-head">
+    <h2 data-i18n="fd.title">Key findings</h2>
+    <p data-i18n="fd.sub">Written from your current selection — they update as you filter.</p>
+  </header>
+  <div class="findings" id="findingsGrid" aria-live="polite"></div>
+</section>
+
+<!-- ============ Map ============ -->
+<section class="wrap block" id="explore">
+  <header class="section-head">
+    <h2 data-i18n="m.title">Network map</h2>
+    <p data-i18n="m.sub">Hover a line for details, click it to inspect. Every filter applies instantly.</p>
+  </header>
+
+  <div class="mapwrap" id="mapwrap">
+    <div class="mapstage">
+      <div id="map" role="application" aria-label="Network map of Yerevan"></div>
+      <div class="map-tools" id="mapTools">
+        <button type="button" class="map-btn" id="mFit" data-i18n-attr="aria-label:m.fit;title:m.fit" aria-label="Fit to selection">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+        <button type="button" class="map-btn" id="mWhole" data-i18n-attr="aria-label:m.reset;title:m.reset" aria-label="Whole network">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <button type="button" class="map-btn" id="mFull" data-i18n-attr="aria-label:m.full;title:m.full" aria-label="Fullscreen">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></svg>
+        </button>
+      </div>
+      <div class="map-badge" id="mapBadge" aria-live="polite"></div>
+    </div>
+
+    <aside class="mappanel" id="mapPanel" aria-label="Map controls">
+      <div class="pblock selblock">
+        <h3 data-i18n="m.sel">Selected segment</h3>
+        <div id="selCard"></div>
+      </div>
+
+      <div class="pblock">
+        <h3 data-i18n="m.layers">Layers</h3>
+        <label class="switch"><input type="checkbox" id="lyLines" checked><span class="sw"></span><span data-i18n="m.lines">Network lines</span></label>
+        <label class="switch"><input type="checkbox" id="lyDensity"><span class="sw"></span><span data-i18n="m.density">Density grid</span></label>
+        <label class="switch"><input type="checkbox" id="lyLabels" checked><span class="sw"></span><span data-i18n="m.labels">Community labels</span></label>
+        <label class="switch"><input type="checkbox" id="lyContext" checked><span class="sw"></span><span data-i18n="m.context">Excluded segments as grey context</span></label>
+        <label class="switch"><input type="checkbox" id="lyAuto" checked><span class="sw"></span><span data-i18n="m.autozoom">Zoom to the selection when filters change</span></label>
+      </div>
+
+      <div class="pblock">
+        <h3 data-i18n="m.colorBy">Colour by</h3>
+        <div class="seg wide" id="segColor" role="group">
+          <button type="button" data-val="voltage" aria-pressed="true" data-i18n="m.byVoltage">Voltage</button>
+          <button type="button" data-val="branch" aria-pressed="false" data-i18n="m.byBranch">Branch</button>
+        </div>
+        <div class="legend" id="mapLegend"></div>
+      </div>
+
+      <div class="pblock" id="densityBlock" hidden>
+        <h3 data-i18n="m.cell">Density cell</h3>
+        <div class="seg wide" id="segCell" role="group">
+          <button type="button" data-val="500" aria-pressed="true" data-i18n="m.cell500">500 m</button>
+          <button type="button" data-val="1000" aria-pressed="false" data-i18n="m.cell1000">1 km</button>
+        </div>
+        <div class="legend" id="densityLegend"></div>
+      </div>
+
+      <div class="pblock">
+        <h3 data-i18n="m.basemap">Basemap</h3>
+        <div class="seg wide four" id="segBase" role="group">
+          <button type="button" data-val="light" aria-pressed="true" data-i18n="m.b.light">Light</button>
+          <button type="button" data-val="dark" aria-pressed="false" data-i18n="m.b.dark">Dark</button>
+          <button type="button" data-val="streets" aria-pressed="false" data-i18n="m.b.streets">Streets</button>
+          <button type="button" data-val="satellite" aria-pressed="false" data-i18n="m.b.satellite">Satellite</button>
+        </div>
+        <p class="fine" data-i18n="m.tiles">Basemap tiles are loaded online; the network lines are always available offline.</p>
+      </div>
+
+    </aside>
+  </div>
+</section>
+
+<!-- ============ Analysis ============ -->
+<section class="wrap block" id="analysis">
+  <header class="section-head">
+    <h2 data-i18n="nav.analysis">Analysis</h2>
+    <p data-i18n="c.hint">Click a bar or row to filter the whole page.</p>
+  </header>
+
+  <div class="charts">
+    <article class="card chart c-voltage" id="chVoltage">
+      <header class="card-head">
+        <div><h3 data-i18n="c.voltage.t">Voltage composition</h3><p class="sub" data-i18n="c.voltage.s">Share of line length by voltage level</p></div>
+        <div class="seg viewseg" role="group"><button type="button" data-view="chart" aria-pressed="true" data-i18n="c.view.chart">Chart</button><button type="button" data-view="table" aria-pressed="false" data-i18n="c.view.table">Table</button></div>
+      </header>
+      <div class="card-body"><div class="view view-chart"></div><div class="view view-table" hidden></div></div>
+    </article>
+
+    <article class="card chart c-branch" id="chBranch">
+      <header class="card-head">
+        <div><h3 data-i18n="c.branch.t">Length by branch</h3><p class="sub" data-i18n="c.branch.s">Kilometres of line, split by voltage</p></div>
+        <div class="seg viewseg" role="group"><button type="button" data-view="chart" aria-pressed="true" data-i18n="c.view.chart">Chart</button><button type="button" data-view="table" aria-pressed="false" data-i18n="c.view.table">Table</button></div>
+      </header>
+      <div class="card-body"><div class="view view-chart"></div><div class="view view-table" hidden></div></div>
+    </article>
+
+    <article class="card chart c-comm" id="chComm">
+      <header class="card-head">
+        <div><h3 data-i18n="c.comm.t">Length by community</h3><p class="sub" data-i18n="c.comm.s">Kilometres of line in each community</p></div>
+        <div class="seg viewseg" role="group"><button type="button" data-view="chart" aria-pressed="true" data-i18n="c.view.chart">Chart</button><button type="button" data-view="table" aria-pressed="false" data-i18n="c.view.table">Table</button></div>
+      </header>
+      <div class="card-body"><div class="view view-chart"></div><div class="view view-table" hidden></div></div>
+    </article>
+
+    <article class="card chart c-matrix" id="chMatrix">
+      <header class="card-head">
+        <div><h3 data-i18n="c.matrix.t">Branch × voltage</h3><p class="sub" data-i18n="c.matrix.s">Kilometres of line at each voltage, by branch</p></div>
+        <div class="seg viewseg" role="group"><button type="button" data-view="chart" aria-pressed="true" data-i18n="c.view.chart">Chart</button><button type="button" data-view="table" aria-pressed="false" data-i18n="c.view.table">Table</button></div>
+      </header>
+      <div class="card-body"><div class="view view-chart"></div><div class="view view-table" hidden></div></div>
+    </article>
+
+    <article class="card chart c-hist" id="chHist">
+      <header class="card-head">
+        <div><h3 data-i18n="c.hist.t">Segment length distribution</h3><p class="sub" data-i18n="c.hist.s">Number of segments in each length class</p></div>
+        <div class="seg viewseg" role="group"><button type="button" data-view="chart" aria-pressed="true" data-i18n="c.view.chart">Chart</button><button type="button" data-view="table" aria-pressed="false" data-i18n="c.view.table">Table</button></div>
+      </header>
+      <div class="card-body"><div class="view view-chart"></div><div class="view view-table" hidden></div></div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ Branch footprints ============ -->
+<section class="wrap block" id="branches">
+  <header class="section-head">
+    <h2 data-i18n="b.title">Branch footprints</h2>
+    <p data-i18n="b.sub">Where each branch operates, drawn from its own line geometry.</p>
+  </header>
+  <div class="bgrid" id="bgrid"></div>
+</section>
+
+<!-- ============ Data table ============ -->
+<section class="wrap block" id="data">
+  <header class="section-head row">
+    <div>
+      <h2 data-i18n="d.title">Segment register</h2>
+      <p data-i18n="d.sub">Every line segment in the current selection.</p>
+    </div>
+    <div class="export">
+      <button type="button" class="btn" id="dCsv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.csv">Download CSV</span></button>
+      <button type="button" class="btn" id="dGeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.geojson">Download GeoJSON</span></button>
+    </div>
+  </header>
+
+  <div class="card tablecard">
+    <div class="tablewrap">
+      <table class="dt" id="dt">
+        <thead><tr id="dtHead"></tr></thead>
+        <tbody id="dtBody"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="pager"></div>
+  </div>
+</section>
+
+<!-- ============ Notes ============ -->
+<section class="wrap block" id="notes">
+  <header class="section-head">
+    <h2 data-i18n="n.title">Data notes &amp; method</h2>
+    <p data-i18n="n.sub">What the numbers rest on.</p>
+  </header>
+  <div class="notes" id="notesGrid"></div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <div class="foot-brand">
+      <svg class="brand-mark sm" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0b1f33"/><path d="M18.5 4 8 18h6l-1.5 10L24 13h-6.2z" fill="#f5b301"/></svg>
+      <span><strong data-i18n="brand.country">HAYASTAN</strong> · <span data-i18n="brand.org">Electric Networks Department</span></span>
+    </div>
+    <p class="fine" data-i18n="ft.data">Data: line.geojson · Basemaps: Esri, HERE, Garmin, © OpenStreetMap contributors</p>
+    <a class="to-top" href="#overview" data-target="overview" data-i18n="ft.top">Back to top</a>
+  </div>
+</footer>
+
+<noscript><p class="noscript">This atlas needs JavaScript to draw the map and charts.</p></noscript>
+
+<script src="data/network-data.js"></script>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/core.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/map.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
