@@ -3,6 +3,11 @@
 An interactive, bilingual (English / Հայերեն) decision-maker site built from
 `..\HEC_JSON\line.geojson` (1,697 line segments · 837.9 km · 6 / 10 / 35 kV).
 
+## Live site
+
+https://haykkhachatr.github.io/ENA/ — published with GitHub Pages from the `main` branch (root folder).
+Every push to `main` redeploys it automatically.
+
 ## Open it
 
 Double-click **`index.html`**. No server, build step or install is needed — the data is embedded
