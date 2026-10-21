@@ -714,7 +714,7 @@
       { t: 'n.length.t', b: t('n.length.b', { geo: fmt.km(q.geodesicKm, 1), attr: fmt.km(q.attrKm, 1), dev: fmt.pct(q.geodesicDevPct, 2), max: fmt.pct(q.maxSegDevPct, 2) }) },
       { t: 'n.kv.t', b: t('n.kv.b', { n: fmt.int(HEC.base.kvN[35]), km: fmt.km(HEC.base.kvKm[35], 1), branch: HEC.name.branch(v35br) }) },
       { t: 'n.uid.t', check: true, b: t('n.uid.b', { miss: fmt.int(q.missingUid), pct: fmt.pct((q.missingUid / q.features) * 100, 1), top: fmt.int(topMiss[1]), branch: HEC.name.branch(brIdx(topMiss[0])), dup: fmt.int(q.duplicateUidGroups) }) },
-      { t: 'n.names.t', check: true, b: t('n.names.b', { a: sp(q.spellingVariants[0][0]), an: q.spellingVariants[0][1], b: sp(q.spellingVariants[1][0]), bn: q.spellingVariants[1][1], out: q.outsideYerevan, prov: outName }) },
+      { t: 'n.names.t', check: true, b: t('n.names.b', { from: sp(q.spellingFixed.from), to: sp(q.spellingFixed.to), an: q.spellingFixed.communitySegments, nn: q.spellingFixed.nameSegments, out: q.outsideYerevan, prov: outName }) },
       { t: 'n.read.t', b: t('n.read.b') },
       { t: 'n.method.t', b: t('n.method.b') }
     ];

@@ -23,6 +23,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.normpath(os.path.join(HERE, "..", "..", "HEC_JSON", "line.geojson"))
 OUT = os.path.normpath(os.path.join(HERE, "..", "data", "network-data.js"))
 
+# Spelling standardisation applied to the Community and Name attributes (the source file is not modified).
+# (variant -> standard)
+SPELLING = [("Դավիթաշեն", "Դավթաշեն")]
+
 TOL_M = 1.0          # simplification tolerance, metres
 DECIMALS = 5         # coordinate precision
 R = 6371008.8
@@ -75,6 +79,17 @@ def main():
         gj = json.load(fh)
     feats = gj["features"]
     feats.sort(key=lambda f: f["properties"]["ID_final"])
+
+    recoded = {"community": 0, "name": 0}
+    for f in feats:
+        p = f["properties"]
+        for bad, good in SPELLING:
+            if bad in (p["Community"] or ""):
+                p["Community"] = p["Community"].replace(bad, good)
+                recoded["community"] += 1
+            if bad in (p["Name"] or ""):
+                p["Name"] = p["Name"].replace(bad, good)
+                recoded["name"] += 1
 
     branches, communities, provinces = [], [], []
 
@@ -158,8 +173,8 @@ def main():
         "duplicateNameFeatures": sum(v for v in names.values() if v > 1),
         "outsideYerevan": sum(1 for f in feats if f["properties"]["Province"] != "Երևան"),
         "shortUnder5m": sum(1 for f in feats if f["properties"]["Length"] < 0.005),
-        "spellingVariants": [["Դավթաշեն", sum(1 for f in feats if f["properties"]["Community"] == "Դավթաշեն")],
-                             ["Դավիթաշեն", sum(1 for f in feats if f["properties"]["Community"] == "Դավիթաշեն")]],
+        "spellingFixed": {"from": SPELLING[0][0], "to": SPELLING[0][1],
+                          "communitySegments": recoded["community"], "nameSegments": recoded["name"]},
     }
 
     xs = [pt[0] for r in out for pt in (r["c"] or [q for part in r["m"] for q in part])]

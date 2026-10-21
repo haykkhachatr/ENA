@@ -38,6 +38,9 @@ Also: light / dark theme, EN / HY switch (preferences are remembered), print / *
    `python tools/build_data.py path/to/line.geojson`). Without an argument it reads `..\..\HEC_JSON\line.geojson`.
 3. Refresh the page. Branches, communities and all statistics update automatically; the data notes are recomputed too.
 
+Spelling standardisation: `tools/build_data.py` has a `SPELLING` table (currently Դավիթաշեն -> Դավթաշեն, i.e. "Davitashen" -> "Davtashen")
+that is applied to the Community and Name attributes during the build. The source `line.geojson` is never modified.
+
 ## Notes for IT
 
 * **Basemaps** use Esri's public tile services (Light/Dark Gray, Streets, Imagery). CARTO and OpenStreetMap's

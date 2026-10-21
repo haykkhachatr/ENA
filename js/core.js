@@ -51,7 +51,7 @@
     'Երևան': 'Yerevan', 'Երևան 110/35': 'Yerevan 110/35', 'Նորք': 'Nork', 'Մաշտոց': 'Mashtots',
     'Էրեբունի': 'Erebuni', 'Շենգավիթ': 'Shengavit', 'Կենտրոն': 'Kentron', 'Նոր Նորք': 'Nor Nork',
     'Մալաթիա-Սեբաստիա': 'Malatia-Sebastia', 'Ավան': 'Avan', 'Դավթաշեն': 'Davtashen',
-    'Դավիթաշեն': 'Davitashen', 'Աջափնյակ': 'Ajapnyak', 'Նորք Մարաշ': 'Nork Marash', 'Արաբկիր': 'Arabkir',
+    'Աջափնյակ': 'Ajapnyak', 'Նորք Մարաշ': 'Nork Marash', 'Արաբկիր': 'Arabkir',
     'Քանաքեռ-Զեյթուն': 'Kanaker-Zeytun', 'Նուբարաշեն': 'Nubarashen', 'Ջրվեժ': 'Jrvezh', 'Կոտայք': 'Kotayk'
   };
   const placeEn = (s) => PLACE_EN[s] || translit(s);
