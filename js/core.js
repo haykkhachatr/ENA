@@ -396,40 +396,4 @@
     },
     hide() { tipEl.hidden = true; }
   };
-
-  /* ---------- CSV / GeoJSON export (a list of features; defaults to the current selection) ---------- */
-  const csvCell = (v) => {
-    const s = v === null || v === undefined ? '' : String(v);
-    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-  };
-  const download = (name, mime, text) => {
-    const blob = new Blob([text], { type: mime });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = name;
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
-  };
-  HEC.exportCSV = (list, tag) => {
-    list = list || HEC.sel;
-    const head = ['ID', 'UID', 'Name', 'Name_Latin', 'Voltage_kV', 'Branch', 'Branch_Latin', 'Community', 'Community_Latin', 'Province', 'Length_km'];
-    const rows = list.map((f) => [f.id, f.uid, f.nm, f.nmEn, f.kv, D.branches[f.br], D.branchesEn[f.br],
-      D.communities[f.cm], D.communitiesEn[f.cm], D.provinces[f.pv], f.len]);
-    download('hec-network-' + (tag || 'selection') + '.csv', 'text/csv;charset=utf-8',
-      '﻿' + [head].concat(rows).map((r) => r.map(csvCell).join(',')).join('\r\n'));
-    HEC.toast(HEC.t('d.exported', { n: HEC.fmt.int(list.length) }));
-  };
-  HEC.exportGeoJSON = (list, tag) => {
-    list = list || HEC.sel;
-    const fc = {
-      type: 'FeatureCollection', name: 'line_selection',
-      crs: { type: 'name', properties: { name: 'urn:ogc:def:crs:OGC:1.3:CRS84' } },
-      features: list.map((f) => ({
-        type: 'Feature',
-        properties: { ID_final: f.id, UID: f.uid, Province: D.provinces[f.pv], Branch: D.branches[f.br], Community: D.communities[f.cm], Name: f.nm, Length: f.len, Voltage: f.kv },
-        geometry: { type: 'MultiLineString', coordinates: f.parts }
-      }))
-    };
-    download('hec-network-' + (tag || 'selection') + '.geojson', 'application/geo+json', JSON.stringify(fc));
-    HEC.toast(HEC.t('d.exported', { n: HEC.fmt.int(list.length) }));
-  };
 })();

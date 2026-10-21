@@ -50,9 +50,6 @@
         <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11z"/></svg>
         <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3 17 7M7 17l-1.7 1.7"/></svg>
       </button>
-      <button type="button" class="icon-btn" id="printBtn" data-i18n-attr="aria-label:tool.print;title:tool.print" aria-label="Print or save as PDF">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3.5h10V8M7 17H4.5v-7.5h15V17H17M7 14h10v6.5H7z"/></svg>
-      </button>
       <button type="button" class="icon-btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i18n-attr="aria-label:tool.menu" aria-label="Menu">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -290,19 +287,10 @@
 
 <!-- ============ Data table ============ -->
 <section class="wrap block" id="data">
-  <header class="section-head row">
+  <header class="section-head">
     <div>
       <h2 data-i18n="d.title">Segment register</h2>
       <p data-i18n="d.sub">Every line segment in the current selection.</p>
-    </div>
-    <div class="export">
-      <div class="seg export-scope" id="exScope" role="group" hidden>
-        <button type="button" data-scope="selection" aria-pressed="true"></button>
-        <button type="button" data-scope="all" aria-pressed="false"></button>
-      </div>
-      <button type="button" class="btn" id="dCsv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.csv">Download CSV</span></button>
-      <button type="button" class="btn" id="dGeo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg><span data-i18n="d.geojson">Download GeoJSON</span></button>
-      <p class="fine export-note" id="exNote" role="status" hidden></p>
     </div>
   </header>
 

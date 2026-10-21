@@ -25,10 +25,10 @@ Only the basemap tiles need an internet connection; the network lines work offli
 | Map | Lines coloured by voltage or branch, density grid (500 m / 1 km), community labels, grey context for filtered-out lines, 4 basemaps, fit/fullscreen, click a line for details |
 | Analysis | Voltage mix, length by branch (stacked by voltage), by community, branch × voltage matrix, segment-length distribution — every bar is clickable and cross-filters; each chart has a table view |
 | Branch footprints | Mini-map per branch from its own geometry; click to focus the whole page |
-| Segment register | Sortable, paged table of the selection; click a row to locate it; **CSV** and **GeoJSON** export of exactly what is filtered |
+| Segment register | Sortable, paged table of the selection; click a row to locate it |
 | Data notes | Source, length cross-check, identifier gaps, naming issues — the points to confirm before decisions |
 
-Also: light / dark theme, EN / HY switch (preferences are remembered), print / *Save as PDF* layout, keyboard-accessible controls, reduced-motion support, phone layout.
+Also: light / dark theme, EN / HY switch (preferences are remembered), keyboard-accessible controls, reduced-motion support, phone layout.
 
 ## Updating the data
 
@@ -40,6 +40,16 @@ Also: light / dark theme, EN / HY switch (preferences are remembered), print / *
 
 Spelling standardisation: `tools/build_data.py` has a `SPELLING` table (currently Դավիթաշեն -> Դավթաշեն, i.e. "Davitashen" -> "Davtashen")
 that is applied to the Community and Name attributes during the build. The source `line.geojson` is never modified.
+
+## No downloads
+
+The site has no download, export or save-as-PDF features: the CSV / GeoJSON buttons and the print button were removed.
+
+**Important limit:** this is a *public static site*. The data is delivered to every visitor's browser as
+`data/network-data.js`, and the repository itself is public, so anyone can still fetch that file or the repository's
+*Download ZIP*. A website cannot technically prevent that (or the browser's own *Save page* / *Print*).
+To genuinely restrict access, the data must not be published: keep the repository private and serve the site
+from behind a login (GitHub Pages on a private repository needs a paid plan).
 
 ## Notes for IT
 
@@ -59,7 +69,7 @@ that is applied to the Community and Name attributes during the build. The sourc
 index.html            page structure
 css/styles.css        design tokens, layout, components, print
 js/i18n.js            EN / HY strings
-js/core.js            data model, filters, aggregation, palette, transliteration, export
+js/core.js            data model, filters, aggregation, palette, transliteration
 js/charts.js          the five charts (+ table views)
 js/map.js             Leaflet map and layers
 js/ui.js              header, hero, filters, KPIs, findings, branch cards, table, notes

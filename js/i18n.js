@@ -17,7 +17,6 @@
       'nav.data': 'Data',
       'nav.notes': 'Notes',
       'tool.theme': 'Switch light / dark theme',
-      'tool.print': 'Print or save as PDF',
       'tool.lang': 'Language',
       'tool.menu': 'Menu',
 
@@ -162,8 +161,6 @@
 
       'd.title': 'Segment register',
       'd.sub': 'Every line segment in the current selection. Click a row to locate it on the map.',
-      'd.csv': 'Download CSV',
-      'd.geojson': 'Download GeoJSON',
       'd.col.id': 'ID',
       'd.col.name': 'Segment',
       'd.col.kv': 'kV',
@@ -178,10 +175,6 @@
       'd.next': 'Next page',
       'd.empty': 'No segments match the current filters.',
       'd.locate': 'Show on map',
-      'd.exported': 'Downloaded {n} segments',
-      'd.scope.sel': 'Current selection',
-      'd.scope.all': 'Full network',
-      'd.fallback': 'No segments match the filters, so the download contains the full network.',
 
       'n.title': 'Data notes & method',
       'n.sub': 'What the numbers rest on — including the points worth confirming before decisions are taken.',
@@ -218,7 +211,6 @@
       'nav.data': 'Տվյալներ',
       'nav.notes': 'Նշումներ',
       'tool.theme': 'Փոխել բաց / մութ ոճը',
-      'tool.print': 'Տպել կամ պահպանել PDF',
       'tool.lang': 'Լեզու',
       'tool.menu': 'Մենյու',
 
@@ -363,8 +355,6 @@
 
       'd.title': 'Հատվածների ռեեստր',
       'd.sub': 'Ընթացիկ ընտրության բոլոր գծային հատվածները։ Սեղմեք տողի վրա՝ քարտեզում գտնելու համար։',
-      'd.csv': 'Ներբեռնել CSV',
-      'd.geojson': 'Ներբեռնել GeoJSON',
       'd.col.id': 'ID',
       'd.col.name': 'Հատված',
       'd.col.kv': 'կՎ',
@@ -379,10 +369,6 @@
       'd.next': 'Հաջորդ էջ',
       'd.empty': 'Ընթացիկ զտիչներին համապատասխան հատված չկա։',
       'd.locate': 'Ցույց տալ քարտեզում',
-      'd.exported': 'Ներբեռնվեց {n} հատված',
-      'd.scope.sel': 'Ընթացիկ ընտրություն',
-      'd.scope.all': 'Ամբողջ ցանցը',
-      'd.fallback': 'Զտիչներին համապատասխան հատված չկա, ուստի ներբեռնվելու է ամբողջ ցանցը։',
 
       'n.title': 'Տվյալների նշումներ և մեթոդաբանություն',
       'n.sub': 'Ինչի վրա են հիմնված թվերը, այդ թվում՝ կետեր, որոնք արժե հաստատել որոշումներ կայացնելուց առաջ։',
